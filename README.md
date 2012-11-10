@@ -22,6 +22,9 @@ name.
 By default /sudo prints [sudo] in front of everything the command tries to
 send back. `-s` (silent) disables this behaviour.
 
+If `<command>` contains words beginning with a `-` character the `--` is
+required or they could under certain circumstances be parsed as options.
+
 Permissions
 -----------
 
