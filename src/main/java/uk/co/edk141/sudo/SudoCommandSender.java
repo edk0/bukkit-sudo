@@ -10,38 +10,30 @@ import org.bukkit.permissions.ServerOperator;
 
 public class SudoCommandSender extends PermissibleBase implements CommandSender
 {
-    private String name;
     private CommandSender base;
+    private String name;
     private boolean permissionExtend;
     private String prefix;
     
     private static class SudoServerOperator implements ServerOperator
-    {
-        private boolean _isOp;
-        private CommandSender base;
-        
-        public SudoServerOperator(boolean isOp, CommandSender base)
-        {
-            this._isOp = isOp;
-            this.base = base;
-        }
-        
+    {        
         @Override
         public boolean isOp()
         {
-            return _isOp || base.isOp();
+            return true;
         }
         
         @Override
         public void setOp(boolean value) {}
     }
     
-    public SudoCommandSender(String name, CommandSender base, boolean isOp, boolean permissionExtend, boolean silent)
+    public SudoCommandSender(String name, CommandSender base, boolean permissionExtend, boolean silent)
     {
-        super(new SudoServerOperator(isOp, base));
-        this.name = name;
+        super(new SudoServerOperator());
         this.base = base;
+        this.name = name;
         this.permissionExtend = permissionExtend;
+        
         if (silent) {
             this.prefix = "";
         } else if (name.equals(base.getName())) {
@@ -76,13 +68,13 @@ public class SudoCommandSender extends PermissibleBase implements CommandSender
     @Override
     public boolean hasPermission(String name)
     {
-        return permissionExtend ? true : base.hasPermission(name);
+        return permissionExtend ? true : (super.hasPermission(name) || base.hasPermission(name));
     }
     
     @Override
     public boolean hasPermission(Permission perm)
     {
-        return permissionExtend ? true : base.hasPermission(perm);
+        return permissionExtend ? true : (super.hasPermission(perm) || base.hasPermission(perm));
     }
     
     @Override

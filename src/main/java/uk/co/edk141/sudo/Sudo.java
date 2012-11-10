@@ -75,6 +75,11 @@ public class Sudo extends JavaPlugin implements Listener {
             }
         }
         
+        // is there anything left to run?
+        if (args.length - opts_end <= 0) {
+            return false;
+        }
+        
         // check permissions
         if (user != null) {
             if (!sender.hasPermission("sudo.name")) {
@@ -91,7 +96,7 @@ public class Sudo extends JavaPlugin implements Listener {
         
         // do the actual thing
         String cmdline = StringUtils.join(Arrays.copyOfRange(args, opts_end, args.length), " ");
-        Bukkit.dispatchCommand(new SudoCommandSender(user, sender, true, use_pe, silent), cmdline);
+        Bukkit.dispatchCommand(new SudoCommandSender(user, sender, use_pe, silent), cmdline);
         
         return true;
     }
