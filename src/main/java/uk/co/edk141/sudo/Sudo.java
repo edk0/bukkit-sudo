@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.command.CommandException;
 
 public class Sudo extends JavaPlugin implements Listener {
     @Override
@@ -35,6 +36,7 @@ public class Sudo extends JavaPlugin implements Listener {
         // what mode are we in?
         boolean use_pe = false;
         boolean silent = false;
+        boolean verbose = false;
         String user = null;
         boolean need_user = false;
         int opts_end = 0;
@@ -68,6 +70,9 @@ public class Sudo extends JavaPlugin implements Listener {
                         }
                         need_user = true;
                         break;
+                    case 'v':
+                        verbose = true;
+                        break;
                     default:
                         sender.sendMessage("Invalid option " + c);
                         return true;
@@ -78,6 +83,17 @@ public class Sudo extends JavaPlugin implements Listener {
         // is there anything left to run?
         if (args.length - opts_end <= 0) {
             return false;
+        }
+        
+        // lol
+        if (verbose && silent) {
+            sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "ATTEMPTING TO ENABLE SILENT MODE");
+            sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "TRYING...");
+            sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "TRYING HARDER...");
+            sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "Failed: java.lang." + ChatColor.MAGIC +
+                    "-------" + ChatColor.RESET + "" + ChatColor.RED + "" + ChatColor.BOLD + "Exception: make up your mind");
+            sender.sendMessage(ChatColor.GRAY + "[sudo] (I can't be verbose and silent at the same time)");
+            return true;
         }
         
         // check permissions
@@ -95,8 +111,25 @@ public class Sudo extends JavaPlugin implements Listener {
         }
         
         // do the actual thing
-        String cmdline = StringUtils.join(Arrays.copyOfRange(args, opts_end, args.length), " ");
-        Bukkit.dispatchCommand(new SudoCommandSender(user, sender, use_pe, silent), cmdline);
+        String[] sudoCommand = Arrays.copyOfRange(args, opts_end, args.length);
+        String cmdline = StringUtils.join(sudoCommand, " ");
+        
+        // verbose debug output for pre-execute
+        if (verbose) {
+            String as_str = "";
+            if (use_pe) as_str += " with extended permissions";
+            if (!user.equals(sender.getName())) as_str += " as " + ChatColor.GREEN + user + ChatColor.RESET;
+            sender.sendMessage(ChatColor.GRAY + "[sudo] Executing " + ChatColor.RESET + cmdline + ChatColor.GRAY + as_str);
+        }
+        
+        // I don't know of a way to make Bukkit give you back its error string, so catch CommandExceptions
+        try {
+            Bukkit.dispatchCommand(new SudoCommandSender(user, sender, use_pe, silent), cmdline);
+        } catch (CommandException ex) {
+            String ex_str = "";
+            if (verbose) ex_str += ": " + ChatColor.RED + ex.getCause().toString() + ChatColor.RESET;
+            sender.sendMessage(ChatColor.GRAY + "[sudo] Error executing " + ChatColor.RESET + sudoCommand[0] + ChatColor.GRAY + ex_str);
+        }
         
         return true;
     }

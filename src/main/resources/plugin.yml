@@ -31,6 +31,7 @@ commands:
        -p         Run with all permissions set to true
        -s         Silent (don't tag output with [sudo])
        -u <user>  Run with name <user>
+       -v         Be verbose
     permission: sudo.op
     permission-message: You don't have permission for /<command>
-    usage: /<command> [-ps] [-u user] command [args...]
+    usage: /<command> [-psv] [-u user] command [args...]
