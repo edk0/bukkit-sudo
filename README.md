@@ -30,13 +30,6 @@ to get some extra output.
 If `<command>` contains words beginning with a `-` character the `--` is
 required or they could under certain circumstances be parsed as options.
 
-Known issues
-------------
-
-* Most built-in commands give you two copies of the same output (e.g. `say hi`
-  will output two lines of chat, one with [sudo] in front of it). I don't know
-  why this is well enough to come up with a fix at this point.
-
 Permissions
 -----------
 
