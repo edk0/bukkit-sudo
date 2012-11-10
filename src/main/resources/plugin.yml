@@ -13,6 +13,7 @@ permissions:
       sudo.permission: true
       sudo.op: true
       sudo.name: true
+    default: false
   sudo.permission:
     description: Allows you to /sudo commands with every permission
     children:
@@ -20,7 +21,6 @@ permissions:
       sudo.name: true
   sudo.op:
     description: Allows you to /sudo commands as op
-    default: op
   sudo.name:
     description: Allows you to /sudo commands as other usernames
 commands:
