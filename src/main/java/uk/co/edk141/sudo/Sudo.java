@@ -122,14 +122,19 @@ public class Sudo extends JavaPlugin implements Listener {
             sender.sendMessage(ChatColor.GRAY + "[sudo] Executing " + ChatColor.RESET + cmdline + ChatColor.GRAY + as_str);
         }
         
+        // create sender
+        SudoCommandSender spoofed = new SudoCommandSender(user, sender, use_pe, silent);
+        
         // I don't know of a way to make Bukkit give you back its error string, so catch CommandExceptions
         try {
-            Bukkit.dispatchCommand(new SudoCommandSender(user, sender, use_pe, silent), cmdline);
+            Bukkit.dispatchCommand(spoofed, cmdline);
         } catch (CommandException ex) {
             String ex_str = "";
             if (verbose) ex_str += ": " + ChatColor.RED + ex.getCause().toString() + ChatColor.RESET;
             sender.sendMessage(ChatColor.GRAY + "[sudo] Error executing " + ChatColor.RESET + sudoCommand[0] + ChatColor.GRAY + ex_str);
         }
+        
+        spoofed.clearPermissions();
         
         return true;
     }
