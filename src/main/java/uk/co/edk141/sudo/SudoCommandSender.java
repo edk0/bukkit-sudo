@@ -43,6 +43,15 @@ public class SudoCommandSender extends PermissibleBase implements CommandSender
         }
     }
     
+    // prevent duplicate broadcast messages
+    protected boolean shouldBlock(String name) {
+        return name.startsWith("bukkit.broadcast.") && base.hasPermission(name);
+    }
+    
+    protected boolean shouldBlock(Permission perm) {
+        return perm.getName().startsWith("bukkit.broadcast.") && base.hasPermission(perm);
+    }
+    
     @Override
     public String getName()
     {
@@ -68,12 +77,14 @@ public class SudoCommandSender extends PermissibleBase implements CommandSender
     @Override
     public boolean hasPermission(String name)
     {
+        if (shouldBlock(name)) return false;
         return permissionExtend ? true : (super.hasPermission(name) || base.hasPermission(name));
     }
     
     @Override
     public boolean hasPermission(Permission perm)
     {
+        if (shouldBlock(perm)) return false;
         return permissionExtend ? true : (super.hasPermission(perm) || base.hasPermission(perm));
     }
     
