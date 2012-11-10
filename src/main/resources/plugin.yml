@@ -1,0 +1,35 @@
+author: Ed Kellett
+database: false
+generator: http://dinnerbone.com/minecraft/tools/pluginator/
+main: uk.co.edk141.sudo.Sudo
+name: sudo
+startup: postworld
+url: http://github.com/edk141/bukkit-sudo/
+version: '1.0'
+permissions:
+  sudo.*:
+    description: Gives access to the sudo command and anything it can do
+    children:
+      sudo.permission: true
+      sudo.op: true
+      sudo.name: true
+  sudo.permission:
+    description: Allows you to /sudo commands with every permission
+    children:
+      sudo.op: true
+      sudo.name: true
+  sudo.op:
+    description: Allows you to /sudo commands as op
+    default: op
+  sudo.name:
+    description: Allows you to /sudo commands as other usernames
+commands:
+  sudo:
+    description: |
+      Execute commands with modified user information.
+       -p         Run with all permissions set to true
+       -s         Silent (don't tag output with [sudo])
+       -u <user>  Run with name <user>
+    permission: sudo.op
+    permission-message: You don't have permission for /<command>
+    usage: /<command> [-ps] [-u user] command [args...]
