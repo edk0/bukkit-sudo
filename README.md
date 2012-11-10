@@ -29,6 +29,6 @@ Permissions
 -----------
 
 * `sudo.*` - everything
+* `sudo.name` - /sudo -u <user>
 * `sudo.op` - /sudo
 * `sudo.permission` - /sudo -p
-* `sudo.name` - /sudo -u <user>
