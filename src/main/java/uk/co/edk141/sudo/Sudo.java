@@ -1,14 +1,17 @@
 package uk.co.edk141.sudo;
 
 import java.util.Arrays;
+
+import org.apache.commons.lang.StringUtils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
+import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.command.CommandException;
 
 public class Sudo extends JavaPlugin implements Listener {
     @Override
@@ -18,6 +21,12 @@ public class Sudo extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
+    }
+    
+    public String preprocessCommand(CommandSender sender, String command) {
+        ServerCommandEvent event = new ServerCommandEvent(sender, command);
+        Bukkit.getPluginManager().callEvent(event);
+        return event.getCommand();
     }
     
     @Override
@@ -124,6 +133,9 @@ public class Sudo extends JavaPlugin implements Listener {
         
         // create sender
         SudoCommandSender spoofed = new SudoCommandSender(user, sender, use_pe, silent);
+
+        // give things like CommandHelper a chance to intercept the command
+        cmdline = preprocessCommand(spoofed, cmdline);
         
         // I don't know of a way to make Bukkit give you back its error string, so catch CommandExceptions
         try {
